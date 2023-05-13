@@ -10,14 +10,20 @@
     "@types/node": "^20.1.1",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "apexcharts": "^3.40.0",
+    "buffer": "^6.0.3",
+    "dotenv": "^16.0.3",
     "react": "^18.2.0",
+    "react-apexcharts": "^1.4.0",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.11.1",
     "react-scripts": "^5.0.1",
+    "safe-buffer": "^5.2.1",
     "styled-components": "^6.0.0-rc.1",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xml-js": "^1.6.11"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -42,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/xml2js": "^0.4.11"
   }
 }
