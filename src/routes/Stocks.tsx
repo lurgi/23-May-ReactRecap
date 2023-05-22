@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import React, { useEffect, useState } from "react";
 import { xml2js } from "xml-js";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -14,8 +15,6 @@ const Header = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
-const StockList = styled.ul``;
 
 const Stock = styled.li`
   background-color: #adadad;
@@ -36,12 +35,6 @@ const Title = styled.h1`
   font-size: 40px;
   color: ${(props) => props.theme.accentColor};
   font-weight: 600;
-`;
-
-const Image = styled.img`
-  height: 25px;
-  width: 25px;
-  margin-right: 10px;
 `;
 
 interface IStock {
@@ -74,8 +67,7 @@ interface IStocks {
 
 function Stocks() {
   const apiKey = process.env.REACT_APP_API_DATA_KEY;
-  console.log(apiKey);
-  const [stockData, setStockData] = useState<IStocks>();
+  const [stockData, setStockData] = useState<IStock[]>();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     (async () => {
@@ -86,12 +78,27 @@ function Stocks() {
         .then((xmlString) => {
           // XML 데이터를 파싱하여 JavaScript 객체로 변환합니다.
           const jsonObject = xml2js(xmlString, { compact: true }) as IStocks;
-          setStockData(jsonObject);
+          const lastDate = jsonObject.response.body.items.item.sort(
+            (a, b) => parseInt(b.basDt._text) - parseInt(a.basDt._text)
+          )[0].basDt._text;
+          setStockData(
+            jsonObject.response.body.items.item
+              .filter(
+                (value) =>
+                  value.mrktCtg._text === "KOSPI" &&
+                  value.basDt._text === lastDate
+              )
+              .sort(
+                (a, b) =>
+                  parseInt(b.mrktTotAmt._text) - parseInt(a.mrktTotAmt._text)
+              )
+          );
         })
         .catch((error) => {
           console.error(error);
         });
     })();
+    console.log(stockData);
     setIsLoading(false);
   }, [apiKey]);
   return (
@@ -101,8 +108,12 @@ function Stocks() {
       </Header>
       {isLoading
         ? "Loading..."
-        : stockData?.response.body.items.item.map((v, i) => (
-            <Stock key={i}>{v.itmsNm._text}</Stock>
+        : stockData?.map((v, i) => (
+            <Link key={i} to={`/kospi/${v.isinCd._text}`}>
+              <Stock>
+                {v.itmsNm._text}/{v.mrktTotAmt._text}
+              </Stock>
+            </Link>
           ))}
     </Container>
   );
